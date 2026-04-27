@@ -1,8 +1,9 @@
 import pgzrun
+from pgzero import Actor, screen, keyboard
 
 # Globale Variablen
-WIDTH = 2204
-HEIGHT = 1046
+WIDTH = 1934
+HEIGHT = 972
 
 MOVE_SPEED = 5
 JUMP_SPEED = 20
@@ -21,6 +22,8 @@ platforms = [
     Actor("platform_1", topleft=(100, 300)),
     Actor("platform_2", topleft=(500, 450)),
     Actor("platform_3", topleft=(1000, 350)),
+    Actor("platform_3", topleft=(1400, 450)),
+    Actor("corner_platform", topleft=(1654, 400)),
 ]
 
 # Lava
