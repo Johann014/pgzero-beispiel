@@ -1,8 +1,8 @@
 import pgzrun
 
 # Globale Variablen
-WIDTH = 1280
-HEIGHT = 700
+WIDTH = 2204
+HEIGHT = 1046
 
 MOVE_SPEED = 5
 JUMP_SPEED = 20
