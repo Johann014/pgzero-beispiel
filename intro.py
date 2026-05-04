@@ -1,5 +1,5 @@
 import pgzrun
-from pgzero import Actor, screen, keyboard
+
 
 # Globale Variablen
 WIDTH = 1934
@@ -16,6 +16,17 @@ hero.midbottom = (200, 100)
 hero.vx = 0
 hero.vy = 0
 hero.on_ground = False
+
+# Powerup
+powerup = Actor("coin", anchor=("center", "center"))
+powerup.center = (550, 380)  # Starposition des Powerups
+powerup.notactive = True
+
+# Powerup aktivieren
+powerup_active_timer = 0
+powerup_duration = 4 * 60  # 4 Sekunden 
+original_move_speed = MOVE_SPEED
+original_jump_speed = JUMP_SPEED
 
 # Plattformen
 platforms = [
@@ -38,6 +49,10 @@ def draw():
     for platform in platforms:
         platform.draw()
 
+    # Zeichne Powerup
+    if powerup.notactive:
+        powerup.draw()
+
     # Zeichne Charakter
     hero.draw()
 
@@ -49,6 +64,16 @@ def draw():
 
 
 def update():
+    global MOVE_SPEED, JUMP_SPEED, powerup_active_timer
+    
+    # Powerup-Timer aktualisieren
+    if powerup_active_timer > 0:
+        powerup_active_timer -= 1
+    else:
+        # Wenn Timer abgelaufen ist, Stats zurücksetzen
+        MOVE_SPEED = original_move_speed
+        JUMP_SPEED = original_jump_speed
+    
     # x-Geschwindigkeit berechnen (Bewegung nach links/rechts)
     hero.vx = 0
     if keyboard.left:
@@ -95,6 +120,13 @@ def update():
         hero.y += hero.vy
         hero.on_ground = False
 
+    # Powerup-Kollision überprüfen
+    if powerup.notactive and hero.colliderect(powerup):
+        powerup.notactive = False
+        powerup_active_timer = powerup_duration
+        MOVE_SPEED = original_move_speed * 2  # Doppelte Geschwindigkeit
+        JUMP_SPEED = original_jump_speed * 1.1  # 10% höher springen
+
     # Bei Berührung mit Lava zur Startposition zurücksetzen
     if (
         hero.right > lava.left
@@ -105,6 +137,11 @@ def update():
         hero.vx = 0
         hero.vy = 0
         hero.on_ground = False
+        # Powerup wieder aktivieren beim Respawn
+        powerup.notactive = True
+        powerup_active_timer = 0
+        MOVE_SPEED = original_move_speed
+        JUMP_SPEED = original_jump_speed
     
     # Aktualisiere das Charakterbild basierend auf der Bewegung
     if not hero.on_ground:
