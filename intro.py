@@ -17,25 +17,55 @@ hero.vx = 0
 hero.vy = 0
 hero.on_ground = False
 
-# Powerup
-powerup = Actor("coin", anchor=("center", "center"))
-powerup.center = (550, 380)  # Starposition des Powerups
-powerup.notactive = True
-
-# Powerup aktivieren
+# Powerup-System
 powerup_active_timer = 0
 powerup_duration = 4 * 60  # 4 Sekunden 
 original_move_speed = MOVE_SPEED
 original_jump_speed = JUMP_SPEED
 
-# Plattformen
-platforms = [
-    Actor("platform_1", topleft=(100, 300)),
-    Actor("platform_2", topleft=(500, 450)),
-    Actor("platform_3", topleft=(1000, 350)),
-    Actor("platform_3", topleft=(1400, 450)),
-    Actor("corner_platform", topleft=(1654, 400)),
+# Level-System
+current_level = 0
+
+# Level-Definitionen (Plattformen, Türen und Powerups für jedes Level)
+LEVELS = [
+    {
+        "platforms": [
+            Actor("platform_1", topleft=(100, 300)),
+            Actor("platform_2", topleft=(500, 450)),
+            Actor("platform_3", topleft=(1000, 350)),
+            Actor("platform_3", topleft=(1400, 450)),
+            Actor("corner_platform", topleft=(1654, 400)),
+        ],
+        "door": Actor("door", bottomleft=(1750, 450)),
+        "powerup": Actor("coin", anchor=("center", "center"), pos=(550, 380)),
+    },
+    {
+        "platforms": [
+            Actor("platform_2", topleft=(200, 250)),
+            Actor("platform_1", topleft=(700, 400)),
+            Actor("platform_3", topleft=(1200, 300)),
+            Actor("platform_2", topleft=(1600, 500)),
+        ],
+        "door": Actor("door", bottomleft=(1750, 500)),
+        "powerup": Actor("coin", anchor=("center", "center"), pos=(900, 350)),
+    },
+    {
+        "platforms": [
+            Actor("platform_3", topleft=(150, 350)),
+            Actor("platform_2", topleft=(600, 500)),
+            Actor("platform_1", topleft=(1100, 300)),
+            Actor("corner_platform", topleft=(1650, 450)),
+        ],
+        "door": Actor("door", bottomleft=(1750, 450)),
+        "powerup": Actor("coin", anchor=("center", "center"), pos=(750, 450)),
+    },
 ]
+
+# Aktuelle Plattformen, Tür und Powerup
+platforms = LEVELS[current_level]["platforms"]
+door = LEVELS[current_level]["door"]
+powerup = LEVELS[current_level]["powerup"]
+powerup.notactive = True
 
 # Lava
 lava = Actor("lava_top", topleft=(0, HEIGHT - 50))
@@ -49,6 +79,9 @@ def draw():
     for platform in platforms:
         platform.draw()
 
+    # Zeichne Tür
+    door.draw()
+
     # Zeichne Powerup
     if powerup.notactive:
         powerup.draw()
@@ -61,10 +94,13 @@ def draw():
     while lava_tile_x < lava.left + lava.span_width:
         screen.blit(lava.image, (lava_tile_x, lava.top))
         lava_tile_x += lava.width
+    
+    # Zeichne Level-Anzeige
+    screen.draw.text(f"Level: {current_level + 1}", (20, 20), color=(255, 255, 255))
 
 
 def update():
-    global MOVE_SPEED, JUMP_SPEED, powerup_active_timer
+    global current_level, platforms, door, powerup, MOVE_SPEED, JUMP_SPEED, powerup_active_timer
     
     # Powerup-Timer aktualisieren
     if powerup_active_timer > 0:
@@ -139,6 +175,28 @@ def update():
         hero.on_ground = False
         # Powerup wieder aktivieren beim Respawn
         powerup.notactive = True
+        powerup_active_timer = 0
+        MOVE_SPEED = original_move_speed
+        JUMP_SPEED = original_jump_speed
+    
+    # Türkollision überprüfen - zum nächsten Level
+    if hero.colliderect(door):
+        # Zum nächsten Level wechseln
+        current_level = (current_level + 1) % len(LEVELS)
+        
+        # Neue Plattformen, Tür und Powerup laden
+        platforms = LEVELS[current_level]["platforms"]
+        door = LEVELS[current_level]["door"]
+        powerup = LEVELS[current_level]["powerup"]
+        powerup.notactive = True
+        
+        # Charakter zur Startposition zurücksetzen
+        hero.midbottom = (200, 100)
+        hero.vx = 0
+        hero.vy = 0
+        hero.on_ground = False
+        
+        # Powerup deaktivieren
         powerup_active_timer = 0
         MOVE_SPEED = original_move_speed
         JUMP_SPEED = original_jump_speed
