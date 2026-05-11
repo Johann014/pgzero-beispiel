@@ -36,15 +36,15 @@ LEVELS = [
             Actor("platform_3", topleft=(1400, 450)),
             Actor("corner_platform", topleft=(1654, 400)),
         ],
-        "door": Actor("door", bottomleft=(1750, 450)),
+        "door": Actor("door", bottomleft=(1750, 440)),
         "powerup": Actor("coin", anchor=("center", "center"), pos=(550, 380)),
     },
     {
         "platforms": [
-            Actor("platform_2", topleft=(200, 250)),
+            Actor("platform_2", topleft=(150, 250)),
             Actor("platform_1", topleft=(700, 400)),
             Actor("platform_3", topleft=(1200, 300)),
-            Actor("platform_2", topleft=(1600, 500)),
+            Actor("platform_2", topleft=(1710, 480)),
         ],
         "door": Actor("door", bottomleft=(1750, 500)),
         "powerup": Actor("coin", anchor=("center", "center"), pos=(900, 350)),
@@ -56,7 +56,7 @@ LEVELS = [
             Actor("platform_1", topleft=(1100, 300)),
             Actor("corner_platform", topleft=(1650, 450)),
         ],
-        "door": Actor("door", bottomleft=(1750, 450)),
+        "door": Actor("door", bottomleft=(1750, 470)),
         "powerup": Actor("coin", anchor=("center", "center"), pos=(750, 450)),
     },
 ]
